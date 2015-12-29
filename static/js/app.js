@@ -18952,15 +18952,21 @@ var App = React.createClass({
         this.setState({ data: data });
       }).bind(this)
     });
-    return { center: { lat: 37.5301, lng: 127.124 } };
+    return {
+      center: { lat: 37.5301, lng: 127.124 },
+      danji: 0
+    };
   },
-
+  handleResponse: function (item) {
+    console.log("handleResponse called", item);
+    this.setState({ danji: item });
+  },
   render: function () {
     return React.createElement(
       'div',
       { className: 'app col-md-12' },
       React.createElement(AreaNav, null),
-      React.createElement(Map, { center: this.state.center, data: this.state.data }),
+      React.createElement(Map, { center: this.state.center, data: this.state.data, handleResponse: this.handleResponse }),
       React.createElement(ItemList, null)
     );
   }
@@ -19016,10 +19022,10 @@ var React = require('react');
 var Map = React.createClass({
 	displayName: 'Map',
 
-	componentDidMount: function () {
-		this.componentDidUpdate();
-	},
-	componentDidUpdate: function () {
+	compopnentDidMount: function () {
+		//function from App.
+		var parentFunc = this.props.handleResponse;
+
 		//make map
 		var options = { //지도를 생성할 때 필요한 기본 옵션
 			center: new daum.maps.LatLng(this.props.center.lat, this.props.center.lng), //지도의 중심좌표.
@@ -19027,28 +19033,35 @@ var Map = React.createClass({
 		};
 		var map = new daum.maps.Map(document.getElementById('map'), options);
 
-		var addInfoWindow = function (marker, msg) {
-			var infowindow = new daum.maps.InfoWindow({
-				content: '<div style="padding:5px;">' + msg + '</div>'
-			});
-			daum.maps.event.addListener(marker, 'mouseover', function () {
-				infowindow.open(map, marker);
-			});
-			daum.maps.event.addListener(marker, 'mouseout', function () {
-				infowindow.close();
-			});
-		};
-
-		for (var i = 0, length = this.props.data.length; i < length; i++) {
-			//make marker
-			var markerPosition = new daum.maps.LatLng(this.props.data[i].x, this.props.data[i].y);
-			var marker = new daum.maps.Marker({
-				position: markerPosition,
-				clickable: true
-			});
-			marker.setMap(map);
-			addInfoWindow(marker, this.props.data[i].name);
-		}
+		//add Infowindow
+		/*
+  var addInfoWindow = function(marker,msg){
+  	var infowindow = new daum.maps.InfoWindow({
+  		content: '<div style="padding:5px;">'+msg+'</div>'
+  	});
+  	daum.maps.event.addListener(marker, 'mouseover', function() {
+      infowindow.open(map, marker);
+  	});
+  	daum.maps.event.addListener(marker, 'mouseout', function() {
+  		infowindow.close();
+  	});
+  	daum.maps.event.addListener(marker, 'click',function(){
+  		console.log("id",marker.getTitle());
+  		parentFunc(Number(marker.getTitle()));
+  	});
+  }
+  	for (var i=0, length = this.props.data.length; i < length; i++){
+  	//make marker
+  	var markerPosition = new daum.maps.LatLng(this.props.data[i].x, this.props.data[i].y);
+  	var marker = new daum.maps.Marker({
+  			position: markerPosition,
+  			title: this.props.data[i].id,
+  			clickable: true
+  		});
+  	marker.data = this.props.data[i];
+  		marker.setMap(map);
+  	addInfoWindow(marker,this.props.data[i].name);
+  }*/
 	},
 	render: function () {
 		return React.createElement(
@@ -19057,7 +19070,7 @@ var Map = React.createClass({
 			React.createElement(
 				'h1',
 				null,
-				'now  오오미오asdf!'
+				'now ok12 !'
 			),
 			React.createElement('div', { id: 'map' })
 		);

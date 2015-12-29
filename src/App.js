@@ -15,16 +15,20 @@ var App = React.createClass({
         this.setState({data: data});
       }.bind(this)
     });
-		return (
-			{center: {lat: 37.5301, lng:  127.124}}
-		);
+		return ({  
+        center: {lat: 37.5301, lng:  127.124},
+        danji: 0
+    });
 	},
-
+  handleResponse: function(item){
+    console.log("handleResponse called",item)
+    this.setState({danji: item});
+  },
   render: function() {
     return (
       <div className="app col-md-12">
         <AreaNav />
-        <Map center={this.state.center} data={this.state.data} />
+        <Map center={this.state.center} data={this.state.data}  handleResponse={this.handleResponse}/>
         <ItemList />
       </div>
     );
