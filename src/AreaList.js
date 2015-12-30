@@ -16,15 +16,19 @@ var AreaList = React.createClass({
 			}.bind(this)
 		});
 	},
+	handleClick: function(){
+
+	},
 	render: function(){
+		var self = this;
 		var itemNodes = this.state.data.map(function(gu){
 			var center = {lat: gu.x, lng: gu.y}
 			return(
-				<AreaItem key={gu.id} name={gu.name} center={center} />
+				<AreaItem key={gu.id} name={gu.name} center={center} onClick={self.props.onClick} />
 			);
 		});
 		return(
-			<div className="areaNav col-md-12">
+			<div className="areaList col-md-12">
 				{itemNodes}
 			</div>
 		);

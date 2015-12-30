@@ -2,3 +2,11 @@
 	height: 400px;
 	width: 400px;
 }
+
+.areaItem{
+	text-align: center;
+	cursor:pointer;
+}
+.areaItem:hover{
+	background: yellow;
+};

@@ -31,13 +31,15 @@ var App = React.createClass({
     this.setState({danji: item});
   },
   //funciton for AreaNav
-  getGu: function(gu){
-    console.log("getGu called");
+  getGu: function(position){
+    console.log('getGu called');
+    this.setState({center: position});
+    console.log(this.state.center);
   },
   render: function() {
     return (
       <div className="app col-md-12">
-        <AreaList getGu={this.getGu} url='/getGu'/>
+        <AreaList getGu={this.getGu} url='/getGu' onClick={this.getGu} />
         <Map center={this.state.center} data={this.state.data}  handleResponse={this.handleResponse}/>
         <MemulList name={this.state.danji} />
       </div>

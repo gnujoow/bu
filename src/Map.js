@@ -16,7 +16,6 @@ var Map = React.createClass({
 		};
 		map = new daum.maps.Map(document.getElementById('map'), options);
 
-
 		//getborder
 		daum.maps.event.addListener(map, 'tilesloaded',function(){
 			var bounds = map.getBounds();

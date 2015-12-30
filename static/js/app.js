@@ -18968,14 +18968,16 @@ var App = React.createClass({
     this.setState({ danji: item });
   },
   //funciton for AreaNav
-  getGu: function (gu) {
-    console.log("getGu called");
+  getGu: function (position) {
+    console.log('getGu called');
+    this.setState({ center: position });
+    console.log(this.state.center);
   },
   render: function () {
     return React.createElement(
       'div',
       { className: 'app col-md-12' },
-      React.createElement(AreaList, { getGu: this.getGu, url: '/getGu' }),
+      React.createElement(AreaList, { getGu: this.getGu, url: '/getGu', onClick: this.getGu }),
       React.createElement(Map, { center: this.state.center, data: this.state.data, handleResponse: this.handleResponse }),
       React.createElement(MemulList, { name: this.state.danji })
     );
@@ -18990,10 +18992,14 @@ var React = require('react');
 var AreaItem = React.createClass({
 	displayName: "AreaItem",
 
+	handleClick: function () {
+		this.props.onClick(this.props.center);
+	},
+
 	render: function () {
 		return React.createElement(
 			"div",
-			{ className: "areaItem col-md-1" },
+			{ className: "areaItem col-md-1", onClick: this.handleClick },
 			this.props.name
 		);
 	}
@@ -19022,14 +19028,16 @@ var AreaList = React.createClass({
 			}).bind(this)
 		});
 	},
+	handleClick: function () {},
 	render: function () {
+		var self = this;
 		var itemNodes = this.state.data.map(function (gu) {
 			var center = { lat: gu.x, lng: gu.y };
-			return React.createElement(AreaItem, { key: gu.id, name: gu.name, center: center });
+			return React.createElement(AreaItem, { key: gu.id, name: gu.name, center: center, onClick: self.props.onClick });
 		});
 		return React.createElement(
 			'div',
-			{ className: 'areaNav col-md-12' },
+			{ className: 'areaList col-md-12' },
 			itemNodes
 		);
 	}
