@@ -18967,7 +18967,7 @@ var App = React.createClass({
       { className: 'app col-md-12' },
       React.createElement(AreaNav, null),
       React.createElement(Map, { center: this.state.center, data: this.state.data, handleResponse: this.handleResponse }),
-      React.createElement(ItemList, null)
+      React.createElement(ItemList, { name: this.state.danji })
     );
   }
 });
@@ -19009,6 +19009,11 @@ var ItemList = React.createClass({
 				"h1",
 				null,
 				" ItemList1"
+			),
+			React.createElement(
+				"p",
+				null,
+				this.props.name
 			)
 		);
 	}
@@ -19028,7 +19033,7 @@ var Map = React.createClass({
 	},
 	DrawMap: function () {
 		//function from App
-		var parentFunc = this.props.handleResponse;
+		parentFunc = this.props.handleResponse;
 
 		//make map
 		var options = { //지도를 생성할 때 필요한 기본 옵션
@@ -19056,8 +19061,7 @@ var Map = React.createClass({
 				infowindow.close();
 			});
 			daum.maps.event.addListener(marker, 'click', function () {
-				console.log("id", marker.getTitle());
-				//parentFunc(Number(marker.getTitle()));
+				parentFunc(Number(marker.getTitle()));
 			});
 		};
 		//

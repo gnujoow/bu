@@ -7,7 +7,7 @@ var Map = React.createClass({
 	},
 	DrawMap: function(){
 		//function from App
-		var parentFunc = this.props.handleResponse;
+		parentFunc = this.props.handleResponse;
 
 		//make map
 		var options = { //지도를 생성할 때 필요한 기본 옵션
@@ -30,6 +30,7 @@ var Map = React.createClass({
 			var infowindow = new daum.maps.InfoWindow({
 				content: '<div style="padding:5px;">'+marker.data.name+'</div>'
 			});
+			//event for markers
 			daum.maps.event.addListener(marker, 'mouseover', function() {
 		    infowindow.open(map, marker);
 			});
@@ -37,8 +38,7 @@ var Map = React.createClass({
 				infowindow.close();
 			});
 			daum.maps.event.addListener(marker, 'click',function(){
-				console.log("id",marker.getTitle());
-				//parentFunc(Number(marker.getTitle()));
+				parentFunc(Number(marker.getTitle()));
 			});
 		}
 		//

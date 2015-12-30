@@ -29,7 +29,7 @@ var App = React.createClass({
       <div className="app col-md-12">
         <AreaNav />
         <Map center={this.state.center} data={this.state.data}  handleResponse={this.handleResponse}/>
-        <ItemList />
+        <ItemList name={this.state.danji} />
       </div>
     );
   }
