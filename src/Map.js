@@ -21,9 +21,13 @@ var Map = React.createClass({
 			var bounds = map.getBounds();
 			console.log("bounds:",bounds);
 		});
-
 	},
+
 	componentDidUpdate: function(){
+		var moveLatLon = new daum.maps.LatLng(this.props.center.lat, this.props.center.lng);
+		map.panTo(moveLatLon);
+		
+		/*
 		//add Infowindow
 		var addInfoWindow = function(marker,msg,map){
 			var infowindow = new daum.maps.InfoWindow({
@@ -53,7 +57,7 @@ var Map = React.createClass({
 
 			marker.setMap(map);
 			addInfoWindow(marker, this.props.data[i].name,map);
-		}
+		}*/
 	},
 	render: function(){
 		return (
