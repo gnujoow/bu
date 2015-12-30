@@ -59,7 +59,6 @@ var Map = React.createClass({
 	render: function(){
 		return (
 			<div className="map-holder col-md-9">
-			<h1>now okasdasdffa12 !</h1>
 				<div id="map"></div>
 			</div>
 		);

@@ -1,8 +1,9 @@
 var React = require('react');
 
 var Map = require('./Map');
-var AreaNav = require('./AreaNav');
-var ItemList = require('./ItemList');
+var AreaList = require('./AreaList');
+var AreaItem = require('./AreaItem');
+var MemulList = require('./MemulList');
 
 
 var App = React.createClass({
@@ -15,21 +16,30 @@ var App = React.createClass({
         this.setState({data: data});
       }.bind(this)
     });
-		return ({  
+		return ({
+        //state for Map 
         center: {lat: 37.5301, lng:  127.124},
-        danji: 0
+        danji: 0,
+
+        //state of AreaNav
+        gu: 0,
     });
 	},
+  //function for Map
   handleResponse: function(item){
     console.log("handleResponse called",item)
     this.setState({danji: item});
   },
+  //funciton for AreaNav
+  getGu: function(gu){
+    console.log("getGu called");
+  },
   render: function() {
     return (
       <div className="app col-md-12">
-        <AreaNav />
+        <AreaList getGu={this.getGu} url='/getGu'/>
         <Map center={this.state.center} data={this.state.data}  handleResponse={this.handleResponse}/>
-        <ItemList name={this.state.danji} />
+        <MemulList name={this.state.danji} />
       </div>
     );
   }
