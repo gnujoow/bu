@@ -14,7 +14,15 @@ var Map = React.createClass({
 			center: new daum.maps.LatLng(this.props.center.lat, this.props.center.lng), //지도의 중심좌표.
 			level: 3 //지도의 레벨(확대, 축소 정도)
 		};
-		this.map = new daum.maps.Map(document.getElementById('map'), options); 
+		map = new daum.maps.Map(document.getElementById('map'), options);
+
+
+		//getborder
+		daum.maps.event.addListener(map, 'tilesloaded',function(){
+			var bounds = map.getBounds();
+			console.log("bounds:",bounds);
+		});
+
 	},
 	componentDidUpdate: function(){
 		//add Infowindow
@@ -34,7 +42,6 @@ var Map = React.createClass({
 			});
 		}
 		//
-		console.log(this.props.data);
 		for (var i=0, length = this.props.data.length; i < length; i++){
 			//make marker
 			var markerPosition = new daum.maps.LatLng(this.props.data[i].x, this.props.data[i].y);
@@ -45,14 +52,14 @@ var Map = React.createClass({
 				});
 			marker.data = this.props.data[i];
 
-			marker.setMap(this.map);
-			addInfoWindow(marker, this.props.data[i].name,this.map);
+			marker.setMap(map);
+			addInfoWindow(marker, this.props.data[i].name,map);
 		}
 	},
 	render: function(){
 		return (
 			<div className="map-holder col-md-9">
-			<h1>now okasdfa12 !</h1>
+			<h1>now okasdasdffa12 !</h1>
 				<div id="map"></div>
 			</div>
 		);
