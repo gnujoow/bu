@@ -5,7 +5,6 @@ var AreaList = require('./AreaList');
 var AreaItem = require('./AreaItem');
 var MemulList = require('./MemulList');
 
-
 var App = React.createClass({
 	getInitialState: function(){
     $.ajax({
@@ -18,7 +17,8 @@ var App = React.createClass({
     });
 		return ({
         //state for Map 
-        center: {lat: 37.5301, lng:  127.124},
+        center: {lat: 37.52085679565041, lng:  127.04701312474145},
+        bounds: {T:127.02884405627579,aa:127.06518448556062,ba:37.52558743753324,ca:37.51612335307927},
         danji: 0,
 
         //state of AreaNav
@@ -31,7 +31,7 @@ var App = React.createClass({
     this.setState({danji: item});
   },
   //funciton for AreaNav
-  getGu: function(position){
+  getCenterPos: function(position){
     console.log('getGu called');
     this.setState({center: position});
     console.log(this.state.center);
@@ -39,8 +39,8 @@ var App = React.createClass({
   render: function() {
     return (
       <div className="app col-md-12">
-        <AreaList getGu={this.getGu} url='/getGu' onClick={this.getGu} />
-        <Map center={this.state.center} data={this.state.data}  handleResponse={this.handleResponse}/>
+        <AreaList getGu={this.getGu} url='/getGu' onClick={this.getCenterPos} />
+        <Map center={this.state.center} data={this.state.data}  getCenterPos={this.getCenterPos} handleResponse={this.handleResponse}/>
         <MemulList name={this.state.danji} />
       </div>
     );

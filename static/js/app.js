@@ -18955,7 +18955,8 @@ var App = React.createClass({
     });
     return {
       //state for Map
-      center: { lat: 37.5301, lng: 127.124 },
+      center: { lat: 37.52085679565041, lng: 127.04701312474145 },
+      bounds: { T: 127.02884405627579, aa: 127.06518448556062, ba: 37.52558743753324, ca: 37.51612335307927 },
       danji: 0,
 
       //state of AreaNav
@@ -18968,7 +18969,7 @@ var App = React.createClass({
     this.setState({ danji: item });
   },
   //funciton for AreaNav
-  getGu: function (position) {
+  getCenterPos: function (position) {
     console.log('getGu called');
     this.setState({ center: position });
     console.log(this.state.center);
@@ -18977,8 +18978,8 @@ var App = React.createClass({
     return React.createElement(
       'div',
       { className: 'app col-md-12' },
-      React.createElement(AreaList, { getGu: this.getGu, url: '/getGu', onClick: this.getGu }),
-      React.createElement(Map, { center: this.state.center, data: this.state.data, handleResponse: this.handleResponse }),
+      React.createElement(AreaList, { getGu: this.getGu, url: '/getGu', onClick: this.getCenterPos }),
+      React.createElement(Map, { center: this.state.center, data: this.state.data, getCenterPos: this.getCenterPos, handleResponse: this.handleResponse }),
       React.createElement(MemulList, { name: this.state.danji })
     );
   }
@@ -19058,57 +19059,73 @@ var Map = React.createClass({
 	DrawMap: function () {
 		//function from App
 		parentFunc = this.props.handleResponse;
+		getCenterPosFunc = this.props.getCenterPos;
 
 		//make map
 		var options = { //지도를 생성할 때 필요한 기본 옵션
 			center: new daum.maps.LatLng(this.props.center.lat, this.props.center.lng), //지도의 중심좌표.
-			level: 3 //지도의 레벨(확대, 축소 정도)
+			level: 4 //지도의 레벨(확대, 축소 정도)
 		};
-		console.log('center set', typeof this.props.center.lat, typeof this.props.center.lng);
 		map = new daum.maps.Map(document.getElementById('map'), options);
+
+		//clusterer
+		clusterer = new daum.maps.MarkerClusterer({
+			map: map,
+			averageCenter: true,
+			minLevel: 5
+		});
 
 		//getborder
 		daum.maps.event.addListener(map, 'tilesloaded', function () {
+			var center = { lat: map.getCenter().getLat(), lng: map.getCenter().getLng() };
+			getCenterPosFunc(center);
+			console.log('center:', center);
 			var bounds = map.getBounds();
 			console.log("bounds:", bounds);
 		});
 	},
 
 	componentDidUpdate: function () {
-		console.log("componentDidUpdate", this.props.center);
+		//remove all markers
+		clusterer.clear();
+
 		var moveLatLon = new daum.maps.LatLng(this.props.center.lat, this.props.center.lng);
 		map.panTo(moveLatLon);
-		console.log('center move', typeof this.props.center.lat, typeof this.props.center.lng);
-		/*
-  //add Infowindow
-  var addInfoWindow = function(marker,msg,map){
-  	var infowindow = new daum.maps.InfoWindow({
-  		content: '<div style="padding:5px;">'+marker.data.name+'</div>'
-  	});
-  	//event for markers
-  	daum.maps.event.addListener(marker, 'mouseover', function() {
-      infowindow.open(map, marker);
-  	});
-  	daum.maps.event.addListener(marker, 'mouseout', function() {
-  		infowindow.close();
-  	});
-  	daum.maps.event.addListener(marker, 'click',function(){
-  		parentFunc(Number(marker.getTitle()));
-  	});
-  }
-  //
-  for (var i=0, length = this.props.data.length; i < length; i++){
-  	//make marker
-  	var markerPosition = new daum.maps.LatLng(this.props.data[i].x, this.props.data[i].y);
-  	var marker = new daum.maps.Marker({
-  			position: markerPosition,
-  			title: this.props.data[i].id,
-  			clickable: true
-  		});
-  	marker.data = this.props.data[i];
-  		marker.setMap(map);
-  	addInfoWindow(marker, this.props.data[i].name,map);
-  }*/
+
+		//add Infowindow
+		var addInfoWindow = function (marker, msg, map) {
+			marker.info = new daum.maps.InfoWindow({
+				content: '<div style="padding:5px;">' + marker.data.name + '</div>'
+			});
+			//event for markers
+			daum.maps.event.addListener(marker, 'mouseover', function () {
+				marker.info.open(map, marker);
+			});
+			daum.maps.event.addListener(marker, 'mouseout', function () {
+				marker.info.close();
+			});
+			daum.maps.event.addListener(marker, 'click', function () {
+				marker.info.close();
+				parentFunc(Number(marker.getTitle()));
+			});
+		};
+
+		var markerList = [];
+		for (var i = 0, length = this.props.data.length; i < length; i++) {
+			//make marker
+			var markerPosition = new daum.maps.LatLng(this.props.data[i].x, this.props.data[i].y);
+			var marker = new daum.maps.Marker({
+				position: markerPosition,
+				title: this.props.data[i].id,
+				clickable: true
+			});
+			clusterer.addMarkers(marker);
+
+			marker.data = this.props.data[i];
+			addInfoWindow(marker, this.props.data[i].name, map);
+			markerList.push(marker);
+		}
+		clusterer.addMarkers(markerList);
 	},
 	render: function () {
 		return React.createElement(
