@@ -18931,7 +18931,7 @@ var ReactDOM = require('react-dom');
 //application
 var App = require('./src/App');
 
-ReactDOM.render(React.createElement(App, { url: 'getDanji' }), document.getElementById('main'));
+ReactDOM.render(React.createElement(App, { url: '/getDanji' }), document.getElementById('main'));
 
 },{"./src/App":159,"react":157,"react-dom":28}],159:[function(require,module,exports){
 var React = require('react');
@@ -18953,10 +18953,10 @@ var App = React.createClass({
         this.setState({ data: data });
       }).bind(this)
     });
+
     return {
       //state for Map
       center: { lat: 37.52085679565041, lng: 127.04701312474145 },
-      bounds: { T: 127.02884405627579, aa: 127.06518448556062, ba: 37.52558743753324, ca: 37.51612335307927 },
       danji: 0,
 
       //state of AreaNav
@@ -18968,18 +18968,24 @@ var App = React.createClass({
     console.log("handleResponse called", item);
     this.setState({ danji: item });
   },
+
   //funciton for AreaNav
   getCenterPos: function (position) {
-    console.log('getGu called');
+    console.log("getCenterPos called");
     this.setState({ center: position });
-    console.log(this.state.center);
   },
+
   render: function () {
     return React.createElement(
       'div',
       { className: 'app col-md-12' },
       React.createElement(AreaList, { getGu: this.getGu, url: '/getGu', onClick: this.getCenterPos }),
-      React.createElement(Map, { center: this.state.center, data: this.state.data, getCenterPos: this.getCenterPos, handleResponse: this.handleResponse }),
+      React.createElement(Map, { center: this.state.center,
+        data: this.state.data,
+        bounds: this.state.bounds
+        //func
+        , getCenterPos: this.getCenterPos,
+        handleResponse: this.handleResponse }),
       React.createElement(MemulList, { name: this.state.danji })
     );
   }
@@ -19052,18 +19058,23 @@ var React = require('react');
 var Map = React.createClass({
 	displayName: 'Map',
 
+	getInitialState: function () {
+		return {
+			//data: this.props.data,
+			center: this.props.center
+		};
+	},
 	componentDidMount: function () {
 		this.DrawMap();
 		this.componentDidUpdate();
 	},
 	DrawMap: function () {
 		//function from App
-		parentFunc = this.props.handleResponse;
-		getCenterPosFunc = this.props.getCenterPos;
+		self = this;
 
 		//make map
 		var options = { //지도를 생성할 때 필요한 기본 옵션
-			center: new daum.maps.LatLng(this.props.center.lat, this.props.center.lng), //지도의 중심좌표.
+			center: new daum.maps.LatLng(this.state.center.lat, this.state.center.lng), //지도의 중심좌표.
 			level: 4 //지도의 레벨(확대, 축소 정도)
 		};
 		map = new daum.maps.Map(document.getElementById('map'), options);
@@ -19077,20 +19088,29 @@ var Map = React.createClass({
 
 		//getborder
 		daum.maps.event.addListener(map, 'tilesloaded', function () {
+			console.log("tilesloaded");
 			var center = { lat: map.getCenter().getLat(), lng: map.getCenter().getLng() };
-			getCenterPosFunc(center);
-			console.log('center:', center);
 			var bounds = map.getBounds();
-			console.log("bounds:", bounds);
+			self.props.getCenterPos(center);
+			/*
+   $.ajax({
+      url: '/getDanji',
+      dataType: 'json',
+      type: 'POST',
+      data: bounds,
+      success: function(data){
+        this.setState({data: data});
+        console.log("ok")
+      }.bind(this)
+   	});*/
 		});
 	},
-
 	componentDidUpdate: function () {
-		//remove all markers
-		clusterer.clear();
-
+		console.log("loaded");
 		var moveLatLon = new daum.maps.LatLng(this.props.center.lat, this.props.center.lng);
 		map.panTo(moveLatLon);
+		//remove all markers
+		clusterer.clear();
 
 		//add Infowindow
 		var addInfoWindow = function (marker, msg, map) {
@@ -19106,26 +19126,28 @@ var Map = React.createClass({
 			});
 			daum.maps.event.addListener(marker, 'click', function () {
 				marker.info.close();
-				parentFunc(Number(marker.getTitle()));
+				self.props.handleResponse(Number(marker.getTitle()));
 			});
 		};
 
-		var markerList = [];
-		for (var i = 0, length = this.props.data.length; i < length; i++) {
-			//make marker
-			var markerPosition = new daum.maps.LatLng(this.props.data[i].x, this.props.data[i].y);
-			var marker = new daum.maps.Marker({
-				position: markerPosition,
-				title: this.props.data[i].id,
-				clickable: true
-			});
-			clusterer.addMarkers(marker);
+		if (typeof this.props.data != 'undefined') {
+			var markerList = [];
+			for (var i = 0, length = this.props.data.length; i < length; i++) {
+				//make marker
+				var markerPosition = new daum.maps.LatLng(this.props.data[i].x, this.props.data[i].y);
+				var marker = new daum.maps.Marker({
+					position: markerPosition,
+					title: this.props.data[i].id,
+					clickable: true
+				});
+				clusterer.addMarkers(marker);
 
-			marker.data = this.props.data[i];
-			addInfoWindow(marker, this.props.data[i].name, map);
-			markerList.push(marker);
-		}
-		clusterer.addMarkers(markerList);
+				marker.data = this.props.data[i];
+				addInfoWindow(marker, this.props.data[i].name, map);
+				markerList.push(marker);
+			}
+			clusterer.addMarkers(markerList);
+		};
 	},
 	render: function () {
 		return React.createElement(

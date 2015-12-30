@@ -1,6 +1,6 @@
 #! /usr/bin.python
 # -*- coding: utf-8 -*-
-from flask import Flask,render_template
+from flask import Flask,render_template, request
 from flaskext.mysql import MySQL
 import json
 
@@ -23,14 +23,16 @@ def loadGu():
 	sql = "SELECT * FROM gu;"
 	return loadSql(sql)
 
-@app.route('/getDong/<int:gu>', methods=["GET"])
-def loadDong(gu):
-	sql = "SELECT * FROM dong where upperCode="+str(gu)+";"
-	return loadSql(sql)
-
-@app.route('/getDanji',methods=["GET"])
+@app.route('/getDanji',methods=['GET','POST'])
 def loadDanji():
-	sql = "SELECT * FROM danji;"
+	if request.method == 'GET':
+		sql = "SELECT * FROM danji LIMIT 300;"
+	elif request.method == 'POST':
+		bounds = request.form.to_dict()
+		sql = "SELECT * FROM danji where (%s BETWEEN %s and %s) and (%s BETWEEN %s and %s);"\
+		 %('x',bounds['ca'],bounds['ba'],'y',bounds['T'],bounds['aa'])
+		print sql
+
 	return loadSql(sql)
 
 @app.route('/getMemul',methods=["POST"])

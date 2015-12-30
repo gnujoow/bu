@@ -6,6 +6,6 @@ var ReactDOM = require('react-dom');
 var App = require('./src/App')
 
 ReactDOM.render(
-  <App url='getDanji'/>,
+  <App url='/getDanji'/>,
   document.getElementById('main')
 );
