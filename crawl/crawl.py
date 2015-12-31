@@ -95,7 +95,7 @@ for gu in gus:#[17:18]
 																											danji_infos[0].text.encode('utf-8')
 																											,danji_infos[2+offset].text.encode('utf-8'),
 																											j)
-				print "\t\t\t\",sql
+				print "\t\t\t ",sql
 				cursor.execute(sql)
 				db.commit()
 

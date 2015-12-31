@@ -18957,7 +18957,7 @@ var App = React.createClass({
     return {
       //state for Map
       center: { lat: 37.52085679565041, lng: 127.04701312474145 },
-      danji: 0,
+      danji: 199,
 
       //state of AreaNav
       gu: 0
@@ -19166,7 +19166,30 @@ var React = require('react');
 var MemulList = React.createClass({
 	displayName: "MemulList",
 
+	componentDidMount: function () {
+		this.componentDidUpdate();
+	},
+	componentDidUpdate: function () {
+		/*
+  $.ajax({
+  	url: '/getMemul/'+this.props.name,
+  	dataType: 'json',
+  	cache: false,
+  	success: function(data){
+  		this.setState({data: data})
+  		console.log("매물로드ok")
+  		console.log(data);
+  	}.bind(this)
+  })*/
+	},
 	render: function () {
+		var self = this;
+		/*
+  if (this.stae.data.map != 'null'){
+  	var itemNodes = this.state.data.map(function(memul){
+  		<MemulItem key={memul.id} supply={memul.supply} only={memul.only} />
+  	});
+  }*/
 		return React.createElement(
 			"div",
 			{ className: "col-md-3" },

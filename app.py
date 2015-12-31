@@ -1,8 +1,10 @@
 #! /usr/bin.python
 # -*- coding: utf-8 -*-
-from flask import Flask,render_template, request
+from flask import Flask,render_template, Response, request
 from flaskext.mysql import MySQL
-import json
+
+import json, urllib, lxml
+from bs4 import BeautifulSoup
 
 mysql = MySQL()
 app = Flask(__name__)
@@ -35,9 +37,14 @@ def loadDanji():
 
 	return loadSql(sql)
 
-@app.route('/getMemul',methods=["POST"])
+@app.route('/getMemul/<int:danji>',methods=["get"])
 def loadMemul(danji):
-	return 0
+	cursor = mysql.get_db().cursor()
+	sql = "SELECT * FROM danji WHERE id = %d;" % (danji)
+	cursor.execute(sql)
+	raw = cursor.fetchall();
+	return crawlPrice(int(raw[0][2]))
+
 
 def loadSql(sql):
 	cursor = mysql.get_db().cursor()
@@ -50,7 +57,31 @@ def loadSql(sql):
 
 	return json.dumps(result)
 
+#해당 단지의 매물을 보여줌 / 아파트이면서 매매인것만
+def crawlPrice(id):
+	url = 'http://land.naver.com/article/articleList.nhn?rletNo=%d&rletTypeCd=A01&tradeTypeCd=A1' % (id) #단지번호
+	html = urllib.urlopen(url)
+	soup = BeautifulSoup(html,'lxml')
+	soup =  soup.find('tbody')
+	soup = soup.find_all('tr')
 
+	#가격
+	result=[]
+	idx = 0
+	for s in soup:
+		a = {}
+		if not isinstance(s.find('',{"class":"calc_area"}),type(None)):
+			string = s.find('',{"class":"calc_area"}).text.encode('utf-8')#.replace('\t', "")
+			arr = string.replace('\t', "").replace('\n', "").replace('\r', "").split('㎡')
+			a.update({'supply':arr[0]})# 공급면적#더 나누고 싶은데 [Decode error - output not utf-8]가 뜬
+			a.update({'only':arr[1]})#전용면적
+		if not isinstance(s.find('strong'),type(None)):
+			a.update({'price':s.find('strong').text.encode('utf-8')})
+		if a:#null이 아니면
+			idx = idx+1
+			a.update({'id':idx})
+			result.append(a)
+	return json.dumps(result)
 
 if __name__ == "__main__":
 	app.run(debug=True)

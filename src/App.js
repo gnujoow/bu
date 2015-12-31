@@ -19,7 +19,7 @@ var App = React.createClass({
 		return ({
         //state for Map 
         center: {lat: 37.52085679565041, lng:  127.04701312474145},
-        danji: 0,
+        danji: 199,
 
         //state of AreaNav
         gu: 0,
