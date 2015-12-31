@@ -14,7 +14,7 @@ var MemulList = React.createClass({
 				);
 			});
 			return (
-				<div className="col-md-3">
+				<div className="col-md-4 memulList">
 					<h1> item# : {this.props.name}</h1>
 					{itemNodes}
 				</div>
@@ -22,7 +22,7 @@ var MemulList = React.createClass({
 		}
 		else{
 			return (
-				<div className="col-md-3">
+				<div className="col-md-4 memulList">
 					<h1> 로딩 </h1>
 				</div>
 			);

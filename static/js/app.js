@@ -19179,7 +19179,7 @@ var Map = React.createClass({
 	render: function () {
 		return React.createElement(
 			'div',
-			{ className: 'map-holder col-md-9' },
+			{ className: 'map-holder col-md-8' },
 			React.createElement('div', { id: 'map' })
 		);
 	}
@@ -19191,26 +19191,27 @@ module.exports = Map;
 var React = require('react');
 
 var MemulItem = React.createClass({
-	displayName: "MemulItem",
+	displayName: 'MemulItem',
 
 	render: function () {
 		return React.createElement(
-			"div",
-			null,
+			'div',
+			{ className: 'row' },
 			React.createElement(
-				"div",
-				{ className: "col-md-4" },
+				'div',
+				{ className: 'col-md-4' },
 				this.props.supply
 			),
 			React.createElement(
-				"div",
-				{ className: "col-md-4" },
+				'div',
+				{ className: 'col-md-4' },
 				this.props.only
 			),
 			React.createElement(
-				"div",
-				{ className: "col-md-4" },
-				this.props.price
+				'div',
+				{ className: 'col-md-4' },
+				this.props.price,
+				'만'
 			)
 		);
 	}
@@ -19235,7 +19236,7 @@ var MemulList = React.createClass({
 			});
 			return React.createElement(
 				'div',
-				{ className: 'col-md-3' },
+				{ className: 'col-md-4 memulList' },
 				React.createElement(
 					'h1',
 					null,
@@ -19247,7 +19248,7 @@ var MemulList = React.createClass({
 		} else {
 			return React.createElement(
 				'div',
-				{ className: 'col-md-3' },
+				{ className: 'col-md-4 memulList' },
 				React.createElement(
 					'h1',
 					null,

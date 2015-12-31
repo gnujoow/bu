@@ -94,7 +94,7 @@ var Map = React.createClass({
 	},
 	render: function(){
 		return (
-			<div className="map-holder col-md-9">
+			<div className="map-holder col-md-8">
 				<div id="map"></div>
 			</div>
 		);
