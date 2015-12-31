@@ -33,7 +33,6 @@ def loadDanji():
 		bounds = request.form.to_dict()
 		sql = "SELECT * FROM danji where (%s BETWEEN %s and %s) and (%s BETWEEN %s and %s);"\
 		 %('x',bounds['ca'],bounds['ba'],'y',bounds['T'],bounds['aa'])
-		print sql
 
 	return loadSql(sql)
 
@@ -67,20 +66,22 @@ def crawlPrice(id):
 
 	#가격
 	result=[]
+	columns=('id','supply','only','price')
 	idx = 0
 	for s in soup:
-		a = {}
+		a = []
 		if not isinstance(s.find('',{"class":"calc_area"}),type(None)):
 			string = s.find('',{"class":"calc_area"}).text.encode('utf-8')#.replace('\t', "")
 			arr = string.replace('\t', "").replace('\n', "").replace('\r', "").split('㎡')
-			a.update({'supply':arr[0]})# 공급면적#더 나누고 싶은데 [Decode error - output not utf-8]가 뜬
-			a.update({'only':arr[1]})#전용면적
+			a.append(arr[0])# 공급면적#더 나누고 싶은데 [Decode error - output not utf-8]가 뜬
+			a.append(arr[1])#전용면적
 		if not isinstance(s.find('strong'),type(None)):
-			a.update({'price':s.find('strong').text.encode('utf-8')})
+			a.append(s.find('strong').text.encode('utf-8'))
 		if a:#null이 아니면
 			idx = idx+1
-			a.update({'id':idx})
-			result.append(a)
+			a.insert(0,idx)
+			result.append(dict(zip(columns, tuple(a))))
+
 	return json.dumps(result)
 
 if __name__ == "__main__":

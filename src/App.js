@@ -5,6 +5,7 @@ var AreaList = require('./AreaList');
 var AreaItem = require('./AreaItem');
 var MemulList = require('./MemulList');
 
+
 var App = React.createClass({
 	getInitialState: function(){
     $.ajax({
@@ -19,16 +20,18 @@ var App = React.createClass({
 		return ({
         //state for Map 
         center: {lat: 37.52085679565041, lng:  127.04701312474145},
-        danji: 199,
-
-        //state of AreaNav
+    
+        //state for AreaNav
         gu: 0,
+
+        //state for Memulist
+        danji: 193,
     });
 	},
   //function for Map
   handleResponse: function(item){
-    console.log("handleResponse called",item)
     this.setState({danji: item});
+    console.log("handleResponse called",item)
   },
   
   //funciton for AreaNav
