@@ -18945,12 +18945,25 @@ var App = React.createClass({
   displayName: 'App',
 
   getInitialState: function () {
+    //marker data
     $.ajax({
       url: this.props.url,
       dataType: 'json',
       cache: false,
       success: (function (data) {
         this.setState({ data: data });
+      }).bind(this)
+    });
+
+    //단지정보
+    $.ajax({
+      url: '/getMemul/' + 193,
+      dataType: 'json',
+      cache: false,
+      success: (function (data) {
+        this.setState({ memul: data });
+        console.log("매물로드ok");
+        console.log(data);
       }).bind(this)
     });
 
@@ -18968,6 +18981,18 @@ var App = React.createClass({
   //function for Map
   handleResponse: function (item) {
     this.setState({ danji: item });
+    $.ajax({
+      url: '/getMemul/' + item,
+      dataType: 'json',
+      cache: false,
+      success: (function (data) {
+        if (data != 'null') {
+          this.setState({ memul: data });
+          console.log("매물로드ok");
+          console.log(data);
+        }
+      }).bind(this)
+    });
     console.log("handleResponse called", item);
   },
 
@@ -18988,7 +19013,7 @@ var App = React.createClass({
         //func
         , getCenterPos: this.getCenterPos,
         handleResponse: this.handleResponse }),
-      React.createElement(MemulList, { name: this.state.danji })
+      React.createElement(MemulList, { name: this.state.danji, memul: this.state.memul })
     );
   }
 });
@@ -19200,39 +19225,36 @@ var MemulItem = require('./MemulItem');
 var MemulList = React.createClass({
 	displayName: 'MemulList',
 
-	getInitialState: function () {
-		console.log('asdf');
-		return {
-			memul: []
-		};
-	},
-	componentDidUpdate: function () {
-		$.ajax({
-			url: '/getMemul/' + this.props.name,
-			dataType: 'json',
-			cache: false,
-			success: (function (data) {
-				this.setState({ memul: data });
-				console.log("매물로드ok");
-				console.log(data);
-			}).bind(this)
-		});
-	},
 	render: function () {
-		var self = this;
-		var itemNodes = this.state.memul.map(function (house) {
-			return React.createElement(MemulItem, { key: house.id, supply: house.supply, only: house.only, price: house.price });
-		});
-		return React.createElement(
-			'div',
-			{ className: 'col-md-3' },
-			React.createElement(
-				'h1',
-				null,
-				' ItemList1'
-			),
-			itemNodes
-		);
+		if (typeof this.props.memul != 'undefined') {
+			console.log(this.props.memul);
+
+			var self = this;
+			var itemNodes = this.props.memul.map(function (house) {
+				return React.createElement(MemulItem, { key: house.id, supply: house.supply, only: house.only, price: house.price });
+			});
+			return React.createElement(
+				'div',
+				{ className: 'col-md-3' },
+				React.createElement(
+					'h1',
+					null,
+					' item# : ',
+					this.props.name
+				),
+				itemNodes
+			);
+		} else {
+			return React.createElement(
+				'div',
+				{ className: 'col-md-3' },
+				React.createElement(
+					'h1',
+					null,
+					' 로딩 '
+				)
+			);
+		}
 	}
 });
 module.exports = MemulList;

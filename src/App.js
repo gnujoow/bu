@@ -5,15 +5,27 @@ var AreaList = require('./AreaList');
 var AreaItem = require('./AreaItem');
 var MemulList = require('./MemulList');
 
-
 var App = React.createClass({
 	getInitialState: function(){
+    //marker data
     $.ajax({
       url: this.props.url,
       dataType: 'json',
       cache: false,
       success: function(data){
         this.setState({data: data});
+      }.bind(this)
+    });
+
+    //단지정보
+    $.ajax({
+        url: '/getMemul/'+193,
+        dataType: 'json',
+        cache: false,
+        success: function(data){
+        this.setState({memul: data})
+        console.log("매물로드ok")
+        console.log(data);
       }.bind(this)
     });
 
@@ -31,6 +43,18 @@ var App = React.createClass({
   //function for Map
   handleResponse: function(item){
     this.setState({danji: item});
+    $.ajax({
+        url: '/getMemul/'+item,
+        dataType: 'json',
+        cache: false,
+        success: function(data){
+          if (data != 'null'){
+          this.setState({memul: data})
+          console.log("매물로드ok")
+          console.log(data);
+        }
+      }.bind(this)
+    });
     console.log("handleResponse called",item)
   },
   
@@ -50,7 +74,7 @@ var App = React.createClass({
             //func 
             getCenterPos={this.getCenterPos}
             handleResponse={this.handleResponse}/>
-        <MemulList name={this.state.danji} />
+        <MemulList name={this.state.danji} memul={this.state.memul} />
       </div>
     );
   }
