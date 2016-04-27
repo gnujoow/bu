@@ -1,4 +1,6 @@
-#app
+# project : bu
+네이버의 부동산 정보를 map에 보여주는 프로젝트
+
 run
 
 	cd /bu
@@ -6,12 +8,13 @@ run
 	python app.py
 	
 
-spec
+### spec
+| language  | pyhton, javascript, html, css |
+| ------------- | ------------- |
+| framework  | flask, reactjs, bootstrap  |
+| api  | daum map(cluster), googel map  |
+| db | MySQL |
 
-	language	: pyhton, javascript, html, css
-	framework	: flask, reactjs, bootstrap
-	api			: daum map(cluster), googel map
-	db			: MySQL
 ---
  - `./crawl` : naver 부동산에서 데이터를 가지고오기 위해 작성한 `python`코드
 
