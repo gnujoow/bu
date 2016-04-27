@@ -1,5 +1,5 @@
 # project : bu
-네이버의 부동산 정보를 map에 보여주는 프로젝트
+네이버의 부동산 정보를 crawling해서 daum map에 보여주는 프로젝트
 
 run
 
@@ -16,7 +16,7 @@ run
 | db | MySQL |
 
 ---
- - `./crawl` : naver 부동산에서 데이터를 가지고오기 위해 작성한 `python`코드
+ - `./crawl` : [naver 부동산](http://land.naver.com/)에서 데이터를 가지고오기 위해 작성한 `python`코드
 
    - library : `lxml`, `beautiful soup4`, `MySQLdb`
    - `crawl.py` : [네이버부동산](land.naver.com) 구 -> 동 -> 단지의 code와 좌표정보를 가져오고 db에 저장
@@ -69,3 +69,6 @@ run
 | x, y			| float			| 좌표정보 lat,lng|
 | fam			| varchar(20)	| 세대수			|
 | brth			| varchar(20)	| 건립일			|
+
+
+---
